@@ -155,7 +155,7 @@ def export_multimodal_slice_html_with_grid(
         vocab_size=getattr(tokenizer, 'vocab_size', 32000)
     )
 
-    # Render HTML page using new slice_vis_multimodal.html template
+    # Render HTML page using slice_vis_multimodal.html (standalone new template)
     out_dir = os.path.dirname(os.path.abspath(output_html_path))
     os.makedirs(out_dir, exist_ok=True)
 
@@ -184,18 +184,21 @@ def export_multimodal_slice_html_with_grid(
     }
 
     bootstrap_json = json.dumps(bootstrap, ensure_ascii=False).replace("</", "<\\/")
-    
-    template_path = Path(__file__).parent / "data" / "slice_vis_multimodal.html"
-    template_str = template_path.read_text(encoding="utf-8")
-    
+
+    try:
+        template_str = (files("jlens") / "data" / "slice_vis_multimodal.html").read_text(encoding="utf-8")
+    except Exception:
+        import jlens
+        template_str = (Path(jlens.__file__).parent / "data" / "slice_vis_multimodal.html").read_text(encoding="utf-8")
+
     d3_tag = _template("embed").split("<style>")[0]
-    
+
     page_html = (
         template_str
         .replace("__TITLE__", html.escape(f"TokenPacker Spatial Grid Lens: {prompt_text[:30]}"))
         .replace("__WHAT__", html.escape(f"Multimodal 12x12 Spatial Grid Readout for prompt: '{prompt_text}'"))
         .replace("__D3__", d3_tag)
-        .replace("__BOOTSTRAP_DATA__", f"window.__BOOTSTRAP__ = {bootstrap_json};")
+        .replace("__BOOTSTRAP__", f"window.__BOOTSTRAP__ = {bootstrap_json};")
     )
 
     with open(output_html_path, "w", encoding="utf-8") as f:
@@ -205,4 +208,6 @@ def export_multimodal_slice_html_with_grid(
     print(f"🎉 Exported 336x336 Spatial Grid HTML to: {output_html_path}")
     print(f"Payload size: {payload_bytes / 1024:.1f} KB. Download to your machine and open in any browser!")
     return page_html
+
+
 
