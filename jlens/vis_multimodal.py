@@ -11,6 +11,8 @@ import io
 import html
 import json
 import base64
+import gzip
+from pathlib import Path
 import numpy as np
 import torch
 from PIL import Image
@@ -153,26 +155,54 @@ def export_multimodal_slice_html_with_grid(
         vocab_size=getattr(tokenizer, 'vocab_size', 32000)
     )
 
-    # Render HTML page
+    # Render HTML page using new slice_vis_multimodal.html template
     out_dir = os.path.dirname(os.path.abspath(output_html_path))
     os.makedirs(out_dir, exist_ok=True)
 
-    page_html, raw_bytes, payload_bytes = build_page(
-        slice_data,
-        prompt=prompt_text,
-        title=f"TokenPacker Spatial Grid Lens: {prompt_text[:30]}",
-        description=f"Multimodal 12x12 Spatial Grid Readout for prompt: '{prompt_text}'",
-        mode=mode,
-        out_dir=out_dir if mode == "fetch" else None
-    )
+    from importlib.resources import files
+    from jlens.vis import _slice_meta, _slice_bin, _template
 
-    # Inject Base64 preprocessed 336x336 image & grid parameters into payload
-    meta_injection = f'"image_b64": "{image_b64}", "grid_rows": 12, "grid_cols": 12, "img_start": {img_pos}, "n_img_tokens": {n_img_tokens}, '
-    page_html = page_html.replace('"meta": {', f'"meta": {{{meta_injection}')
+    meta = _slice_meta(slice_data, prompt_text, f"TokenPacker Spatial Grid Lens: {prompt_text[:30]}", f"Multimodal 12x12 Spatial Grid Readout for prompt: '{prompt_text}'", None, None)
+    meta["image_b64"] = image_b64
+    meta["grid_rows"] = 12
+    meta["grid_cols"] = 12
+    meta["img_start"] = img_pos
+    meta["n_img_tokens"] = n_img_tokens
+
+    ranks = slice_data.rank_tensor.astype("<i4")
+    file_map = {"slice.bin": _slice_bin(slice_data)} | {
+        f"ranks/{tid}.bin": gzip.compress(ranks[:, :, i].tobytes(), compresslevel=6)
+        for i, tid in enumerate(slice_data.tracked_token_ids)
+    }
+
+    bootstrap = {
+        "mode": "embed",
+        "meta": meta,
+        "files": {
+            name: base64.b64encode(body).decode() for name, body in file_map.items()
+        },
+    }
+
+    bootstrap_json = json.dumps(bootstrap, ensure_ascii=False).replace("</", "<\\/")
+    
+    template_path = Path(__file__).parent / "data" / "slice_vis_multimodal.html"
+    template_str = template_path.read_text(encoding="utf-8")
+    
+    d3_tag = _template("embed").split("<style>")[0]
+    
+    page_html = (
+        template_str
+        .replace("__TITLE__", html.escape(f"TokenPacker Spatial Grid Lens: {prompt_text[:30]}"))
+        .replace("__WHAT__", html.escape(f"Multimodal 12x12 Spatial Grid Readout for prompt: '{prompt_text}'"))
+        .replace("__D3__", d3_tag)
+        .replace("__BOOTSTRAP_DATA__", f"window.__BOOTSTRAP__ = {bootstrap_json};")
+    )
 
     with open(output_html_path, "w", encoding="utf-8") as f:
         f.write(page_html)
 
+    payload_bytes = sum(len(b) for b in file_map.values())
     print(f"🎉 Exported 336x336 Spatial Grid HTML to: {output_html_path}")
     print(f"Payload size: {payload_bytes / 1024:.1f} KB. Download to your machine and open in any browser!")
     return page_html
+
