@@ -111,7 +111,7 @@ body{margin:8px}
 
 /* Multimodal Spatial Image Viewer Panel */
 .multimodal-image-panel{display:flex;gap:12px;align-items:flex-start;padding:6px;background:#fafafa;border:1px solid #e0e0e0;border-radius:4px;margin-top:4px}
-.img-container{position:relative;width:240px;height:240px;flex:none;border:1px solid #ccc;border-radius:3px;overflow:hidden;background:#000}
+.img-container{position:relative;width:160px;height:160px;aspect-ratio:1/1;flex:none;border:1px solid #ccc;border-radius:3px;overflow:hidden;background:#000;resize:both;min-width:100px;min-height:100px;max-width:360px;max-height:360px}
 .img-container img{width:100%;height:100%;object-fit:contain;display:block}
 .img-grid-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:all;z-index:5}
 .img-info-panel{flex:1;font-size:11px;color:#444}
@@ -882,10 +882,10 @@ hmWrap.scrollLeft = totalW; // start at the end of the prompt
         const c = k % cols;
         
         patchBox.style.display = 'block';
-        patchBox.style.left = (c * patchW) + 'px';
-        patchBox.style.top = (r * patchH) + 'px';
-        patchBox.style.width = patchW + 'px';
-        patchBox.style.height = patchH + 'px';
+        patchBox.style.left = (c / cols * 100) + '%';
+        patchBox.style.top = (r / rows * 100) + '%';
+        patchBox.style.width = (100 / cols) + '%';
+        patchBox.style.height = (100 / rows) + '%';
         
         infoText.innerHTML = `Active Visual Token: <b style="color:#00aaaa;">&lt;img_${k}&gt;</b> (Token #${tokenIdx})<br>` +
                              `Spatial Patch Grid: Row <b>${r + 1}</b> / ${rows}, Col <b>${c + 1}</b> / ${cols}<br>` +
