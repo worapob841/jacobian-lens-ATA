@@ -117,6 +117,9 @@ body{margin:8px}
 .img-info-panel{flex:1;font-size:11px;color:#444}
 .img-info-panel h3{font-size:12px;margin:0 0 4px;color:#111}
 .patch-box{position:absolute;border:2px solid #00ffff;background:rgba(0,255,255,0.25);pointer-events:none;z-index:6;display:none;box-shadow:0 0 8px rgba(0,255,255,0.8)}
+.tokens-image-row{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.tokens-image-row .tokens-area{flex:1;min-width:220px}
+.tokens-image-row .multimodal-image-panel{flex:none;margin-top:0}
 
 </style></head><body>
 <div class="jlens-page">
@@ -311,24 +314,26 @@ main.innerHTML = `
   <div class="heatmap-wrapper" id="hm-wrap"></div>
   <div class="v-resize" id="tokResize"></div>
   <div class="bottom-controls">
-    <div class="tokens-area" id="tokens"></div>
+    <div class="tokens-image-row">
+      <div class="tokens-area" id="tokens"></div>
+      <div class="multimodal-image-panel" id="mmImagePanel" style="display:none;">
+        <div class="img-container">
+          <img id="preprocessedImg" src="" alt="Preprocessed 336x336 Image">
+          <svg class="img-grid-svg" id="imgGridSvg" viewBox="0 0 240 240"></svg>
+          <div class="patch-box" id="patchBox"></div>
+        </div>
+        <div class="img-info-panel">
+          <h3>Spatial Vision Token Patch Inspector (12&times;12 Grid)</h3>
+          <div id="patchInfoText">Hover over a visual token (<code>&lt;img_k&gt;</code>) in the heatmap or click a patch on the image to see its spatial coverage.</div>
+        </div>
+      </div>
+    </div>
     <div class="rank-row">
       <div class="rank-col">
         <div class="rank-title" id="rankTitle"></div>
         <div class="rank-heatmap" id="rankHm"></div>
       </div>
       <div class="pinned-row" id="pinned"></div>
-    </div>
-    <div class="multimodal-image-panel" id="mmImagePanel" style="display:none;">
-      <div class="img-container">
-        <img id="preprocessedImg" src="" alt="Preprocessed 336x336 Image">
-        <svg class="img-grid-svg" id="imgGridSvg" viewBox="0 0 240 240"></svg>
-        <div class="patch-box" id="patchBox"></div>
-      </div>
-      <div class="img-info-panel">
-        <h3>Spatial Vision Token Patch Inspector (12&times;12 Grid)</h3>
-        <div id="patchInfoText">Hover over a visual token (<code>&lt;img_k&gt;</code>) in the heatmap or click a patch on the image to see its spatial coverage.</div>
-      </div>
     </div>
     <div class="meta-line" id="meta"></div>
   </div>
