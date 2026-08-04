@@ -312,6 +312,13 @@ main.innerHTML = `
   <div class="v-resize" id="tokResize"></div>
   <div class="bottom-controls">
     <div class="tokens-area" id="tokens"></div>
+    <div class="rank-row">
+      <div class="rank-col">
+        <div class="rank-title" id="rankTitle"></div>
+        <div class="rank-heatmap" id="rankHm"></div>
+      </div>
+      <div class="pinned-row" id="pinned"></div>
+    </div>
     <div class="multimodal-image-panel" id="mmImagePanel" style="display:none;">
       <div class="img-container">
         <img id="preprocessedImg" src="" alt="Preprocessed 336x336 Image">
@@ -322,13 +329,6 @@ main.innerHTML = `
         <h3>Spatial Vision Token Patch Inspector (12&times;12 Grid)</h3>
         <div id="patchInfoText">Hover over a visual token (<code>&lt;img_k&gt;</code>) in the heatmap or click a patch on the image to see its spatial coverage.</div>
       </div>
-    </div>
-    <div class="rank-row">
-      <div class="rank-col">
-        <div class="rank-title" id="rankTitle"></div>
-        <div class="rank-heatmap" id="rankHm"></div>
-      </div>
-      <div class="pinned-row" id="pinned"></div>
     </div>
     <div class="meta-line" id="meta"></div>
   </div>
