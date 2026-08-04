@@ -946,32 +946,6 @@
     "    top_n = 10\n",
     ")"
    ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "## Section 7: Standalone 12x12 Spatial Image Grid HTML Visualization Exporter\n",
-    "\n",
-    "This cell imports `export_multimodal_slice_html_with_grid`:\n",
-    "- Converts the exact preprocessed 336x336 `image_tensor` into a Base64 image.\n",
-    "- Renders an interactive **12x12 Spatial Image Grid Panel** under the heatmap.\n",
-    "- **Hovering over `<img_k>`** in the heatmap highlights the exact 2D patch on the preprocessed 336x336 image!"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "# ==========================================\n",
-    "# Export 12x12 Spatial Image Grid HTML Visualization\n",
-    "# ==========================================\n",
-    "from jlens.vis_multimodal import export_multimodal_slice_html_with_grid\n",
-    "\n",
-    "print(\"export_multimodal_slice_html_with_grid imported successfully.\")"
-   ]
   }
  ],
  "metadata": {

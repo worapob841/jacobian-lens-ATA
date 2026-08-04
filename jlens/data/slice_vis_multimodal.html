@@ -1,0 +1,243 @@
+<!doctype html>
+<!--
+Copyright 2026 Anthropic PBC / Antigravity Multimodal Extension
+SPDX-License-Identifier: Apache-2.0
+-->
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>__TITLE__</title>
+__D3__
+<style>
+body{margin:8px}
+.jlens-page{--bd:#eee;--fg:#333;--dim:#666;--bg:#fff;--hl:#f0f;--hl-soft:#fbe7fb;
+  height:calc(100vh - 16px);display:flex;flex-direction:column;overflow:hidden;
+  font:13px/1.4 system-ui,-apple-system,sans-serif;color:var(--fg);background:var(--bg);
+  color-scheme:light}
+.jlens-page,.jlens-page *{box-sizing:border-box}
+.jlens-page svg{display:block}
+.header{flex:none;padding:0 0 4px;display:flex;align-items:baseline;gap:1em}
+.header h1{font-size:15px;margin:0}.header .what{color:var(--dim);font-size:12px;flex:1}
+.main-content{flex:1;display:flex;gap:0;min-height:0}
+.column{display:flex;flex-direction:column;min-width:0;overflow:hidden;flex:1}
+.heatmap-column{flex:2}
+.resize-handle{flex:none;width:6px;cursor:col-resize;background:#fafafa}
+.resize-handle:hover{background:#ddd}
+.heatmap-wrapper{position:relative;flex:1;min-height:0;overflow:auto;cursor:pointer}
+.hm-spacer{position:relative}
+.hm-canvas{position:sticky;left:0;z-index:0;display:block}
+.hm-yaxis{position:sticky;left:0;z-index:2;background:var(--bg);box-shadow:1px 0 0 #ccc;
+          font:10px monospace;color:var(--dim);font-variant-numeric:tabular-nums;text-align:right}
+.hm-yaxis div{padding:0 4px;box-sizing:border-box}
+.hm-xaxis{position:sticky;bottom:0;left:0;z-index:2;height:32px;background:var(--bg);
+          box-shadow:0 -1px 0 #ccc;font:10px monospace;color:var(--dim);overflow:hidden;
+          font-variant-numeric:tabular-nums}
+.hm-xaxis-inner{position:absolute;display:flex;height:100%}
+.hm-xaxis-col{text-align:center;display:flex;flex-direction:column;justify-content:center;
+              white-space:nowrap;overflow:hidden}
+.hm-sel{position:absolute;border:2px solid var(--hl);pointer-events:none;z-index:1}
+.hm-hover{position:absolute;border:1px solid #999;pointer-events:none;z-index:1;display:none}
+.v-resize{flex:none;height:6px;cursor:row-resize;background:#fafafa}
+.v-resize:hover{background:#ddd}
+.unpin-all{font:10px system-ui;color:#999;background:none;border:none;cursor:pointer;padding:1px 4px}
+.unpin-all:hover{color:#000}
+.tooltip{position:fixed;background:#fff;border:1px solid #ccc;border-radius:4px;
+         box-shadow:0 2px 8px rgba(0,0,0,.15);padding:6px 8px;pointer-events:none;
+         z-index:1000;font-size:10px;display:none}
+.tooltip.visible{display:block}
+.tt-header{color:var(--dim);font-variant-numeric:tabular-nums;margin-bottom:4px}
+.tt-table{border-collapse:collapse}
+.tt-rank{color:#999;text-align:right;padding-right:6px;font-variant-numeric:tabular-nums;width:20px}
+.tt-token{font:10px monospace;padding-right:8px;max-width:120px;overflow:hidden;
+          text-overflow:ellipsis;white-space:nowrap}
+.tt-token.pinned{font-weight:600}
+.controls-bar{flex:none;display:flex;gap:1em;align-items:center;flex-wrap:wrap;padding:2px 0;
+              border-bottom:1px solid var(--bd)}
+.readout{font-size:11px;color:var(--dim);font-variant-numeric:tabular-nums;white-space:nowrap}
+.readout b{display:inline-block;width:2.4ch;color:#000;font-weight:600}
+.readout code{display:inline-block;width:9ch;overflow:hidden;text-overflow:ellipsis;
+              white-space:nowrap;vertical-align:bottom;font:11px monospace;color:#000}
+.hint{font-size:10px;color:#bbb;white-space:nowrap;margin-left:auto}
+.bottom-controls{flex:none;border-top:1px solid var(--bd);padding-top:4px}
+.tokens-area{flex:none;font:11px/1.5 monospace;height:4.5em;overflow-y:auto;padding:2px;
+             white-space:pre-wrap;word-break:break-all}
+.token{cursor:pointer;border-radius:2px}.token:hover{background:var(--hl-soft)}
+.token-prefix{color:#bbb;border-radius:2px}
+.token.selected{background:var(--hl-soft);outline:1px solid var(--hl)}
+.meta-line{font-size:10px;color:#999;padding:2px 0}
+.rank-row{display:flex;gap:6px;align-items:flex-start}
+.rank-col{flex:1;min-width:0;display:flex;flex-direction:column}
+.rank-title{font-size:10px;color:var(--dim);padding:0 0 1px 36px}
+.rank-title b{font:11px monospace}
+.chip-x{margin-left:5px;color:#aaa}.pinned-chip:hover .chip-x{color:#000}
+.pinned-row{flex:none;display:flex;flex-direction:column;gap:3px;align-items:flex-start;
+            max-height:200px;overflow-y:auto;padding:2px 0}
+.pinned-row > *{flex:none}
+.pinned-label{color:var(--dim);font-size:11px}
+.pinned-chip{font:10px monospace;border:2px solid;border-radius:3px;background:#fff;
+             padding:1px 5px;cursor:pointer;max-width:110px;overflow:hidden;
+             text-overflow:ellipsis;white-space:nowrap}
+.pinned-chip.chip-active{font-weight:600}
+.ws-row{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--dim);white-space:nowrap}
+.ws-row input{margin:0}
+.help{font-size:11px;color:#999;cursor:help;border:1px solid #ccc;border-radius:50%;
+      width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center}
+.panel-column{padding:0 6px}
+.panel-column h2{font-size:12px;margin:2px 0 4px;flex:none}
+.token-rows{flex:1;overflow-y:auto;min-height:0}
+.token-row{display:flex;align-items:baseline;gap:2px;padding:1px 0;cursor:pointer;
+           white-space:nowrap;overflow:hidden}
+.token-row:hover{background:#fafafa}.token-row.active-row{background:var(--hl-soft)}
+.row-label{flex:none;width:26px;text-align:right;color:var(--dim);font-size:10px;
+           font-variant-numeric:tabular-nums;padding-right:4px}
+.row-ctx-token{flex:none;width:48px;font:10px monospace;color:var(--dim);overflow:hidden;
+               text-overflow:ellipsis;white-space:nowrap}
+.token-cell{font:10px monospace;padding:0 3px;border-radius:2px;cursor:pointer;
+            max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.token-cell:hover{outline:1px solid #ccc}
+.token-cell.fallback{color:#bbb}
+
+/* Multimodal Spatial Image Viewer Panel */
+.multimodal-image-panel{display:flex;gap:12px;align-items:flex-start;padding:6px;background:#fafafa;border:1px solid #e0e0e0;border-radius:4px;margin-top:4px}
+.img-container{position:relative;width:240px;height:240px;flex:none;border:1px solid #ccc;border-radius:3px;overflow:hidden;background:#000}
+.img-container img{width:100%;height:100%;object-fit:contain;display:block}
+.img-grid-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:all;z-index:5}
+.img-info-panel{flex:1;font-size:11px;color:#444}
+.img-info-panel h3{font-size:12px;margin:0 0 4px;color:#111}
+.patch-box{position:absolute;border:2px solid #00ffff;background:rgba(0,255,255,0.25);pointer-events:none;z-index:6;display:none;box-shadow:0 0 8px rgba(0,255,255,0.8)}
+</style>
+</head><body>
+<div class="jlens-page">
+  <div class="header">
+    <h1>__TITLE__</h1>
+    <div class="what">__WHAT__</div>
+  </div>
+  <div class="main-content">
+    <div class="column heatmap-column" id="col0">
+      <div class="controls-bar">
+        <div class="readout">Pos: <code id="ctxLabel">0</code> <code id="ctxTok"></code></div>
+        <div class="readout">Layer: <code id="layerLabel">0</code></div>
+        <div class="hint">Scroll / Drag to navigate • Arrow keys</div>
+      </div>
+      <div class="heatmap-wrapper" id="hmWrap">
+        <div class="hm-spacer" id="hmSpacer">
+          <canvas class="hm-canvas" id="hmCanvas"></canvas>
+          <div class="hm-yaxis" id="hmYaxis"></div>
+          <div class="hm-xaxis" id="hmXaxis"><div class="hm-xaxis-inner" id="hmXaxisInner"></div></div>
+          <div class="hm-sel" id="hmSel"></div>
+          <div class="hm-hover" id="hmHover"></div>
+        </div>
+      </div>
+      <div class="v-resize" id="tokResize"></div>
+      <div class="bottom-controls">
+        <div class="tokens-area" id="toksArea"></div>
+        <!-- Multimodal 336x336 Preprocessed Spatial Image Panel -->
+        <div class="multimodal-image-panel" id="mmImagePanel" style="display:none;">
+          <div class="img-container">
+            <img id="preprocessedImg" src="" alt="Preprocessed 336x336 Image">
+            <svg class="img-grid-svg" id="imgGridSvg" viewBox="0 0 240 240"></svg>
+            <div class="patch-box" id="patchBox"></div>
+          </div>
+          <div class="img-info-panel">
+            <h3>📷 Spatial Vision Token Patch Inspector (12×12 Grid)</h3>
+            <div id="patchInfoText">Hover over a visual token (<code style="background:#eee;padding:1px 4px;">&lt;img_k&gt;</code>) in the heatmap or click a 2D patch on the 336×336 image to highlight spatial coverage.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="resize-handle" data-col="0"></div>
+    <div class="column panel-column" id="col1">
+      <h2 id="byLayerH">By Layer</h2>
+      <div class="token-rows" id="byLayerDiv"></div>
+      <div style="height:120px;flex:none;" id="byLayerChart"></div>
+    </div>
+    <div class="resize-handle" data-col="1"></div>
+    <div class="column panel-column" id="col2">
+      <h2 id="byCtxH">By Position</h2>
+      <div class="token-rows" id="byCtxDiv"></div>
+      <div style="height:120px;flex:none;" id="byCtxChart"></div>
+    </div>
+  </div>
+</div>
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+__BOOTSTRAP_DATA__
+</script>
+<script>
+(function(){
+  const BOOTSTRAP = window.__BOOTSTRAP__ || {};
+  const D = BOOTSTRAP.meta || {};
+  
+  // Render Multimodal Preprocessed Image & SVG Spatial Grid
+  if (D.image_b64) {
+    const mmPanel = document.getElementById('mmImagePanel');
+    const imgEl = document.getElementById('preprocessedImg');
+    const svgEl = document.getElementById('imgGridSvg');
+    const patchBox = document.getElementById('patchBox');
+    const infoText = document.getElementById('patchInfoText');
+    
+    mmPanel.style.display = 'flex';
+    imgEl.src = D.image_b64;
+    
+    const rows = D.grid_rows || 12;
+    const cols = D.grid_cols || 12;
+    const patchW = 240 / cols;
+    const patchH = 240 / rows;
+    
+    // Draw 12x12 SVG grid rectangles
+    let svgInner = '';
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const k = r * cols + c;
+        svgInner += `<rect x="${c * patchW}" y="${r * patchH}" width="${patchW}" height="${patchH}" fill="transparent" stroke="rgba(255,255,255,0.15)" stroke-width="0.5" data-k="${k}" data-r="${r}" data-c="${c}" style="cursor:pointer;"></rect>`;
+      }
+    }
+    svgEl.innerHTML = svgInner;
+    
+    // Update Spatial Patch Highlight Box
+    window.__updateSpatialPatch = function(tokenIdx) {
+      const imgStart = D.img_start || 1;
+      const imgCount = D.n_img_tokens || 144;
+      
+      if (tokenIdx >= imgStart && tokenIdx < imgStart + imgCount) {
+        const k = tokenIdx - imgStart;
+        const r = Math.floor(k / cols);
+        const c = k % cols;
+        
+        patchBox.style.display = 'block';
+        patchBox.style.left = (c * patchW) + 'px';
+        patchBox.style.top = (r * patchH) + 'px';
+        patchBox.style.width = patchW + 'px';
+        patchBox.style.height = patchH + 'px';
+        
+        infoText.innerHTML = `Active Visual Token: <b style="color:#00aaaa;">&lt;img_${k}&gt;</b> (Token #${tokenIdx})<br>` +
+                             `Spatial Patch Grid: Row <b>${r + 1}</b> / ${rows}, Col <b>${c + 1}</b> / ${cols}<br>` +
+                             `Pixel Bounds: [${Math.round(c * 336 / cols)}px : ${Math.round((c + 1) * 336 / cols)}px, ${Math.round(r * 336 / rows)}px : ${Math.round((r + 1) * 336 / rows)}px]`;
+      } else {
+        patchBox.style.display = 'none';
+        infoText.innerHTML = `Active Context Token: <b>${D.ctx_strs[tokenIdx] || ''}</b> (Token #${tokenIdx})<br><i>Hover over a visual token &lt;img_k&gt; to inspect spatial image patch coverage.</i>`;
+      }
+    };
+    
+    // SVG Hover Event Handlers
+    svgEl.querySelectorAll('rect').forEach(rect => {
+      rect.addEventListener('mouseenter', () => {
+        rect.setAttribute('fill', 'rgba(0, 255, 255, 0.4)');
+      });
+      rect.addEventListener('mouseleave', () => {
+        rect.setAttribute('fill', 'transparent');
+      });
+      rect.addEventListener('click', () => {
+        const k = +rect.dataset.k;
+        const imgStart = D.img_start || 1;
+        const targetCtx = imgStart + k;
+        if (window.__setSelCtx) {
+          window.__setSelCtx(targetCtx);
+        }
+      });
+    });
+  }
+})();
+</script>
+</body></html>
