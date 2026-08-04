@@ -51,13 +51,13 @@ def export_multimodal_slice_html_with_grid(
     from llava.constants import IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN
 
     raw_image = Image.open(image_path).convert('RGB')
-    image_tensor = process_images([raw_image], lens_model.image_processor, lens_model.model.config)[0]
+    image_tensor = process_images([raw_image], lens_model.image_processor, lens_model.model.config)[0].unsqueeze(0).to(device, dtype=torch.bfloat16)
     
     # Un-normalize image_tensor [3, 336, 336] -> 336x336 PIL Image
     mean = getattr(lens_model.image_processor, 'image_mean', [0.48145466, 0.4578275, 0.40821073])
     std = getattr(lens_model.image_processor, 'image_std', [0.26862954, 0.26130258, 0.27577711])
 
-    img_np = image_tensor.detach().cpu().float().numpy()
+    img_np = image_tensor.detach().squeeze(0).cpu().float().numpy()
     for c in range(3):
         img_np[c] = img_np[c] * std[c] + mean[c]
     img_np = np.clip(img_np * 255.0, 0, 255).astype(np.uint8)
@@ -69,11 +69,11 @@ def export_multimodal_slice_html_with_grid(
     image_b64 = "data:image/jpeg;base64," + base64.b64encode(buffered.getvalue()).decode()
 
     # 2. Compute Fused Multimodal Input Embeddings
-    full_prompt = DEFAULT_IMAGE_TOKEN + "\n" + prompt_text
+    # full_prompt = DEFAULT_IMAGE_TOKEN + "\n" + prompt_text
+    full_prompt = prompt_text
     input_ids = tokenizer_image_token(full_prompt, lens_model.tokenizer, IMAGE_TOKEN_INDEX, return_tensors='pt').unsqueeze(0).to(device)
-    image_tensor_input = image_tensor.unsqueeze(0).to(device, dtype=torch.bfloat16)
 
-    inputs_embeds = lens_model.get_multimodal_inputs_embeds(input_ids, image_tensor_input)
+    inputs_embeds = lens_model.get_multimodal_inputs_embeds(input_ids, image_tensor)
     seq_len = inputs_embeds.shape[1]
     layers = sorted(set(list(lens.source_layers) + [lens_model.n_layers - 1]))
     n_layers = len(layers)
