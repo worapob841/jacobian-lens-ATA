@@ -73,28 +73,28 @@ class MultimodalTokenPackerLensModel:
         h_b = h_block.tolist() if torch.is_tensor(h_block) else h_block
         w_b = w_block.tolist() if torch.is_tensor(w_block) else w_block
 
-        if hasattr(self.model, "prepare_adaptive_inputs_labels_for_multimodal"):
-            _, _, _, inputs_embeds, _ = self.model.prepare_adaptive_inputs_labels_for_multimodal(
-                input_ids=input_ids,
-                attention_mask=None,
-                past_key_values=None,
-                labels=None,
-                images=images,
-                mode=mode,
-                h_block=h_b,
-                w_block=w_b
-            )
-        else:
-            _, _, _, inputs_embeds, _ = self.model.prepare_inputs_labels_for_multimodal(
-                input_ids=input_ids,
-                attention_mask=None,
-                past_key_values=None,
-                labels=None,
-                images=images,
-                mode=mode,
-                h_block=h_b,
-                w_block=w_b
-            )
+        # if hasattr(self.model, "prepare_adaptive_inputs_labels_for_multimodal"):
+        #     _, _, _, inputs_embeds, _ = self.model.prepare_adaptive_inputs_labels_for_multimodal(
+        #         input_ids=input_ids,
+        #         attention_mask=None,
+        #         past_key_values=None,
+        #         labels=None,
+        #         images=images,
+        #         mode=mode,
+        #         h_block=h_b,
+        #         w_block=w_b
+        #     )
+        # else:
+        _, _, _, inputs_embeds, _ = self.model.prepare_inputs_labels_for_multimodal(
+            input_ids=input_ids,
+            attention_mask=None,
+            past_key_values=None,
+            labels=None,
+            images=images,
+            mode=mode,
+            h_block=h_b,
+            w_block=w_b
+        )
         return inputs_embeds
 
     def forward(self, input_ids_or_embeds: torch.Tensor) -> Any:

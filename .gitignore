@@ -12,3 +12,5 @@ dist/
 *.pt
 slice*.html
 slices/
+
+out/
