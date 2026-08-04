@@ -831,7 +831,12 @@ hmWrap.scrollLeft = totalW; // start at the end of the prompt
 
 // ------- Multimodal Image Panel & 12x12 SVG Spatial Grid Init -------
 (function(){
-  const D = BOOTSTRAP.meta || {};
+  let D = {};
+  try {
+    const boot = JSON.parse(document.getElementById('bootstrap').textContent);
+    D = boot.meta || {};
+  } catch(e) {}
+  
   if (D.image_b64) {
     const mmPanel = document.getElementById('mmImagePanel');
     const imgEl = document.getElementById('preprocessedImg');

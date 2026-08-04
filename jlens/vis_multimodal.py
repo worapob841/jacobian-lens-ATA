@@ -198,7 +198,7 @@ def export_multimodal_slice_html_with_grid(
         .replace("__TITLE__", html.escape(f"TokenPacker Spatial Grid Lens: {prompt_text[:30]}"))
         .replace("__WHAT__", html.escape(f"Multimodal 12x12 Spatial Grid Readout for prompt: '{prompt_text}'"))
         .replace("__D3__", d3_tag)
-        .replace("__BOOTSTRAP__", f"window.__BOOTSTRAP__ = {bootstrap_json};")
+        .replace("__BOOTSTRAP__", bootstrap_json)
     )
 
     with open(output_html_path, "w", encoding="utf-8") as f:
