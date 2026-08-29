@@ -11,6 +11,23 @@ Usage:
         --dim_batch 16 \
         --max_seq_len 256 \
         --output_lens_path out/tokenpacker_multimodal_vqav2_lens.pt
+    torchrun --nproc_per_node=4 fit_multimodal_distributed.py \
+        --model_path /mnt/pvc-shared-pvc-data-volume-ea328235/MLLM/TokenPacker/checkpoints/llava-cross_attn_adaptive-it-thresholdpred-30-multilev-dubconv-llava_v1_5_mix665k-en-h100-05242026 \
+        --question_file /mnt/pvc-shared-pvc-data-volume-ea328235/MLLM/TokenPacker/playground/data/eval/vqav2/llava_vqav2_mscoco_test-dev2015.jsonl \
+        --image_folder /mnt/pvc-shared-pvc-data-volume-ea328235/MLLM/TokenPacker/playground/data/eval/vqav2/test2015 \
+        --n_samples 200 \
+        --dim_batch 16 \
+        --max_seq_len 256 \
+        --output_lens_path out/llava-cross_attn_adaptive-it-thresholdpred-30-multilev-dubconv-llava_v1_5_mix665k-en-h100-05242026/tokenpacker_multimodal_vqav2_lens.pt
+    
+    torchrun --nproc_per_node=4 fit_multimodal_distributed.py \
+        --model_path /mnt/pvc-shared-pvc-data-volume-ea328235/MLLM/TokenPacker/checkpoints/llava-cross_attn_adaptive-it-randthres0205-0408-eval3040-multilev-dubconv-llava_v1_5_mix665k-en-h100-05152026 \
+        --question_file /mnt/pvc-shared-pvc-data-volume-ea328235/MLLM/TokenPacker/playground/data/eval/vqav2/llava_vqav2_mscoco_test-dev2015.jsonl \
+        --image_folder /mnt/pvc-shared-pvc-data-volume-ea328235/MLLM/TokenPacker/playground/data/eval/vqav2/test2015 \
+        --n_samples 200 \
+        --dim_batch 16 \
+        --max_seq_len 256 \
+        --output_lens_path out/llava-cross_attn_adaptive-it-randthres0205-0408-eval3040-multilev-dubconv-llava_v1_5_mix665k-en-h100-05152026/llava-cross_attn_adaptive-it-randthres0205-0408-eval3040-multilev-dubconv-llava_v1_5_mix665k-en-h100-05152026_multimodal_vqav2_lens.pt
 """
 
 import os
@@ -74,18 +91,7 @@ class MultimodalTokenPackerLensModel:
         w_b = w_block.tolist() if torch.is_tensor(w_block) else w_block
 
         # if hasattr(self.model, "prepare_adaptive_inputs_labels_for_multimodal"):
-        #     _, _, _, inputs_embeds, _ = self.model.prepare_adaptive_inputs_labels_for_multimodal(
-        #         input_ids=input_ids,
-        #         attention_mask=None,
-        #         past_key_values=None,
-        #         labels=None,
-        #         images=images,
-        #         mode=mode,
-        #         h_block=h_b,
-        #         w_block=w_b
-        #     )
-        # else:
-        _, _, _, inputs_embeds, _ = self.model.prepare_inputs_labels_for_multimodal(
+        _, _, _, inputs_embeds, _ = self.model.prepare_adaptive_inputs_labels_for_multimodal(
             input_ids=input_ids,
             attention_mask=None,
             past_key_values=None,
@@ -95,6 +101,17 @@ class MultimodalTokenPackerLensModel:
             h_block=h_b,
             w_block=w_b
         )
+        # else:
+        # _, _, _, inputs_embeds, _ = self.model.prepare_inputs_labels_for_multimodal(
+        #     input_ids=input_ids,
+        #     attention_mask=None,
+        #     past_key_values=None,
+        #     labels=None,
+        #     images=images,
+        #     mode=mode,
+        #     h_block=h_b,
+        #     w_block=w_b
+        # )
         return inputs_embeds
 
     def forward(self, input_ids_or_embeds: torch.Tensor) -> Any:
