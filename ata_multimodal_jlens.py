@@ -485,7 +485,7 @@ def prep_prompt_vqav2(question_id: int, model_id: str) -> str:
 if __name__ == "__main__":
     MODEL_PATH = "/g/home/orachat.c/project/MLLM/TokenPacker/checkpoints/llava-cross_attn_adaptive-it-spatialscorrer-thres4060-bound-3060-alpha-001-multilev-dubconv-llava_v1_5_mix665k-en-h100-08092026"
     MODEL_NAME = "llava-cross_attn_adaptive-it-spatialscorrer-thres4060-bound-3060-alpha-001-multilev-dubconv-llava_v1_5_mix665k-en-h100-08092026"
-    FITTED_LENS_PATH = "/g/home/orachat.c/project/MLLM/jacobian-lens-ATA/llava-cross_attn_adaptive-it-spatialscorrer-thres4060-bound-3060-alpha-001-multilev-dubconv-llava_v1_5_mix665k-en-h100-08092026_multimodal_vqav2_lens.pt"
+    FITTED_LENS_PATH = "/g/home/orachat.c/project/MLLM/jacobian-lens-ATA/out/llava-cross_attn_adaptive-it-spatialscorrer-thres4060-bound-3060-alpha-001-multilev-dubconv-llava_v1_5_mix665k-en-h100-08092026/llava-cross_attn_adaptive-it-spatialscorrer-thres4060-bound-3060-alpha-001-multilev-dubconv-llava_v1_5_mix665k-en-h100-08092026_multimodal_vqav2_lens.pt"
     DEVICE = "cuda:0" if torch.cuda.is_available() else "cpu"
     QID = 17515006
 
