@@ -16,7 +16,7 @@ from PIL import Image
 # ==========================================
 # TokenPacker Repository Path Setup
 # ==========================================
-TOKENPACKER_REPO = "/mnt/pvc-shared-pvc-data-volume-ea328235/MLLM/TokenPacker"
+TOKENPACKER_REPO = "/g/home/orachat.c/project/MLLM/TokenPacker "
 if TOKENPACKER_REPO not in sys.path and os.path.exists(TOKENPACKER_REPO):
     sys.path.insert(0, TOKENPACKER_REPO)
     print(f"Added {TOKENPACKER_REPO} to sys.path")
@@ -453,17 +453,17 @@ def export_multimodal_slice_html_adaptive(
     return page_html
 
 
-def prep_prompt_vqav2(question_id: int) -> str:
+def prep_prompt_vqav2(question_id: int, model_id: str) -> str:
     """Prepares a prompt for VQAv2-style questions with an image."""
-    VQAV2_QUESTION_PATH = "/Users/worapob/Projects/AI_project/MLLM/TokenPacker/playground/data/eval/vqav2/llava_vqav2_mscoco_test2015.jsonl"
-    VQAV2_MODEL_ANS = "/Users/worapob/Projects/AI_project/MLLM/TokenPacker/playground/data/eval/vqav2/answers/llava_vqav2_mscoco_test-dev2015/llava-adaptive-hd-it-thres6040-multilev-dubconv-MGM-Finetune-en-h100-01012026/merge.jsonl"
+    VQAV2_QUESTION_PATH = "/g/home/orachat.c/project/MLLM/TokenPacker/playground/data/eval/vqav2/llava_vqav2_mscoco_test2015.jsonl"
+    VQAV2_MODEL_ANS = f"/g/home/orachat.c/project/MLLM/TokenPacker/playground/data/eval/vqav2/answers/llava_vqav2_mscoco_test-dev2015/{model_id}/merge.jsonl"
     # open question file where jsonl look like this
     # {"question_id": 262144000, "image": "COCO_test2015_000000262144.jpg", "text": "Is the ball flying towards the batter?\nAnswer the question using a single word or phrase.", "category": "default"}
     # {"question_id": 262144001, "image": "COCO_test2015_000000262144.jpg", "text": "What sport is this?\nAnswer the question using a single word or phrase.", "category": "default"}
     # and return image path, question, model answer
     with open(VQAV2_QUESTION_PATH, "r") as f:
         question = json.loads(f.readlines()[question_id])["text"]
-        image_path = f"/mnt/pvc-shared-pvc-data-volume-ea328235/MLLM/TokenPacker/playground/data/eval/vqav2/test2015/{json.loads(f.readlines()[question_id])['image']}"
+        image_path = f"/g/home/orachat.c/project/MLLM/TokenPacker/playground/data/eval/vqav2/test2015/{json.loads(f.readlines()[question_id])['image']}"
 
     # model answer where answer is like this
     # {"question_id": 262144005, "prompt": "What credit card company is on the banner in the background?\nAnswer the question using a single word or phrase.", "text": "Mastercard", "answer_id": "To8CJUTumuQgR8kRHL9Si2", "model_id": "llava-adaptive-hd-it-thres6040-multilev-dubconv-MGM-Finetune-en-h100-01012026", "metadata": {}}
@@ -477,9 +477,9 @@ def prep_prompt_vqav2(question_id: int) -> str:
 
 
 if __name__ == "__main__":
-    MODEL_PATH = "/mnt/pvc-shared-pvc-data-volume-ea328235/MLLM/TokenPacker/checkpoints/llava-cross_attn_adaptive-it-randthres0205-0408-eval3040-multilev-dubconv-llava_v1_5_mix665k-en-h100-05152026"
-    MODEL_NAME = "llava-cross_attn_adaptive-it-randthres0205-0408-eval3040-multilev-dubconv-llava_v1_5_mix665k-en-h100-05152026"
-    fitted_lens_path = ""
+    MODEL_PATH = "/g/home/orachat.c/project/MLLM/TokenPacker/checkpoints/llava-cross_attn_adaptive-it-spatialscorrer-thres4060-bound-3060-alpha-001-multilev-dubconv-llava_v1_5_mix665k-en-h100-08092026"
+    MODEL_NAME = "llava-cross_attn_adaptive-it-spatialscorrer-thres4060-bound-3060-alpha-001-multilev-dubconv-llava_v1_5_mix665k-en-h100-08092026"
+    FITTED_LENS_PATH = "/g/home/orachat.c/project/MLLM/jacobian-lens-ATA/llava-cross_attn_adaptive-it-spatialscorrer-thres4060-bound-3060-alpha-001-multilev-dubconv-llava_v1_5_mix665k-en-h100-08092026_multimodal_vqav2_lens.pt"
     DEVICE = "cuda:0" if torch.cuda.is_available() else "cpu"
     QID = 0
     print(f"Using device: {DEVICE}")
@@ -545,17 +545,21 @@ if __name__ == "__main__":
     else:
         lens_model = None
 
-    image_path, prompt = prep_prompt_vqav2(QID)
+    image_path, prompt = prep_prompt_vqav2(QID, MODEL_NAME)
     print(image_path, prompt)
     tmp = export_multimodal_slice_html_adaptive(
         lens_model,
-        fitted_lens_path=fitted_lens_path,
+        fitted_lens_path=FITTED_LENS_PATH,
         image_path=image_path,
         prompt_text=prompt,
         output_html_path=f"out/{MODEL_NAME}/visualizations/multimodal_slice_vqav2_{QID}.html",
         # mode = "embed",
         top_n=10,
     )
+
+
+
+
 
     # prompt = "A chat between a curious user and an artificial intelligence assistant. The assistant gives helpful, detailed, and polite answers to the user's questions. USER: <image>\nWhat is the person holding?\nAnswer the question using a single word or phrase. ASSISTANT: Wii remote"
     # tmp = export_multimodal_slice_html_adaptive(
