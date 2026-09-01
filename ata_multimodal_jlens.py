@@ -461,9 +461,14 @@ def prep_prompt_vqav2(question_id: int, model_id: str) -> str:
     # {"question_id": 262144000, "image": "COCO_test2015_000000262144.jpg", "text": "Is the ball flying towards the batter?\nAnswer the question using a single word or phrase.", "category": "default"}
     # {"question_id": 262144001, "image": "COCO_test2015_000000262144.jpg", "text": "What sport is this?\nAnswer the question using a single word or phrase.", "category": "default"}
     # and return image path, question, model answer
+    image_root = "/g/home/orachat.c/project/MLLM/TokenPacker/playground/data/eval/vqav2/test2015"
     with open(VQAV2_QUESTION_PATH, "r") as f:
-        question = json.loads(f.readlines()[question_id])["text"]
-        image_path = f"/g/home/orachat.c/project/MLLM/TokenPacker/playground/data/eval/vqav2/test2015/{json.loads(f.readlines()[question_id])['image']}"
+        questions = [json.loads(line) for line in f]
+
+    item = questions[question_id]
+
+    question = item["text"]
+    image_path = f"{image_root}/{item['image']}"
 
     # model answer where answer is like this
     # {"question_id": 262144005, "prompt": "What credit card company is on the banner in the background?\nAnswer the question using a single word or phrase.", "text": "Mastercard", "answer_id": "To8CJUTumuQgR8kRHL9Si2", "model_id": "llava-adaptive-hd-it-thres6040-multilev-dubconv-MGM-Finetune-en-h100-01012026", "metadata": {}}
