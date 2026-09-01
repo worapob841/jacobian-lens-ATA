@@ -14,3 +14,4 @@ slice*.html
 slices/
 
 out/
+.DS_Store
