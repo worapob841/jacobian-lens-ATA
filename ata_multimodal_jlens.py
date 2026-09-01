@@ -16,7 +16,7 @@ from PIL import Image
 # ==========================================
 # TokenPacker Repository Path Setup
 # ==========================================
-TOKENPACKER_REPO = "/g/home/orachat.c/project/MLLM/TokenPacker "
+TOKENPACKER_REPO = "/g/home/orachat.c/project/MLLM/TokenPacker"
 if TOKENPACKER_REPO not in sys.path and os.path.exists(TOKENPACKER_REPO):
     sys.path.insert(0, TOKENPACKER_REPO)
     print(f"Added {TOKENPACKER_REPO} to sys.path")
