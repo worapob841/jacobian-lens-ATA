@@ -477,7 +477,7 @@ def prep_prompt_vqav2(question_id: int, model_id: str) -> str:
         model_answer = json.loads(f.readlines()[question_id])["text"]
     return (
         image_path,
-        f"A chat between a curious user and an artificial intelligence assistant. The assistant gives helpful, detailed, and polite answers to the user's questions. USER: <image>\n{question}\nAnswer the question using a single word or phrase. ASSISTANT: {model_answer}",
+        f"A chat between a curious user and an artificial intelligence assistant. The assistant gives helpful, detailed, and polite answers to the user's questions. USER: <image>\n{question} ASSISTANT: {model_answer}",
     )
 
 
@@ -486,7 +486,9 @@ if __name__ == "__main__":
     MODEL_NAME = "llava-cross_attn_adaptive-it-spatialscorrer-thres4060-bound-3060-alpha-001-multilev-dubconv-llava_v1_5_mix665k-en-h100-08092026"
     FITTED_LENS_PATH = "/g/home/orachat.c/project/MLLM/jacobian-lens-ATA/llava-cross_attn_adaptive-it-spatialscorrer-thres4060-bound-3060-alpha-001-multilev-dubconv-llava_v1_5_mix665k-en-h100-08092026_multimodal_vqav2_lens.pt"
     DEVICE = "cuda:0" if torch.cuda.is_available() else "cpu"
-    QID = 0
+    QID = 17515006
+    
+    
     print(f"Using device: {DEVICE}")
     try:
         from transformers import AutoTokenizer, AutoConfig
