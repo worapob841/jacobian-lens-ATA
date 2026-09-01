@@ -461,14 +461,15 @@ def prep_prompt_vqav2(question_id: int, model_id: str) -> str:
     # {"question_id": 262144000, "image": "COCO_test2015_000000262144.jpg", "text": "Is the ball flying towards the batter?\nAnswer the question using a single word or phrase.", "category": "default"}
     # {"question_id": 262144001, "image": "COCO_test2015_000000262144.jpg", "text": "What sport is this?\nAnswer the question using a single word or phrase.", "category": "default"}
     # and return image path, question, model answer
-    image_root = "/g/home/orachat.c/project/MLLM/TokenPacker/playground/data/eval/vqav2/test2015"
+    image_root = (
+        "/g/home/orachat.c/project/MLLM/TokenPacker/playground/data/eval/vqav2/test2015"
+    )
     with open(VQAV2_QUESTION_PATH, "r") as f:
-        questions = [json.loads(line) for line in f]
-
-    item = questions[question_id]
-
-    question = item["text"]
-    image_path = f"{image_root}/{item['image']}"
+        for line in f:
+            item = json.loads(line)
+            if item["question_id"] == question_id:
+                question = item["text"]
+                image_path = f"{image_root}/{item['image']}"
 
     # model answer where answer is like this
     # {"question_id": 262144005, "prompt": "What credit card company is on the banner in the background?\nAnswer the question using a single word or phrase.", "text": "Mastercard", "answer_id": "To8CJUTumuQgR8kRHL9Si2", "model_id": "llava-adaptive-hd-it-thres6040-multilev-dubconv-MGM-Finetune-en-h100-01012026", "metadata": {}}
@@ -487,8 +488,7 @@ if __name__ == "__main__":
     FITTED_LENS_PATH = "/g/home/orachat.c/project/MLLM/jacobian-lens-ATA/llava-cross_attn_adaptive-it-spatialscorrer-thres4060-bound-3060-alpha-001-multilev-dubconv-llava_v1_5_mix665k-en-h100-08092026_multimodal_vqav2_lens.pt"
     DEVICE = "cuda:0" if torch.cuda.is_available() else "cpu"
     QID = 17515006
-    
-    
+
     print(f"Using device: {DEVICE}")
     try:
         from transformers import AutoTokenizer, AutoConfig
@@ -563,10 +563,6 @@ if __name__ == "__main__":
         # mode = "embed",
         top_n=10,
     )
-
-
-
-
 
     # prompt = "A chat between a curious user and an artificial intelligence assistant. The assistant gives helpful, detailed, and polite answers to the user's questions. USER: <image>\nWhat is the person holding?\nAnswer the question using a single word or phrase. ASSISTANT: Wii remote"
     # tmp = export_multimodal_slice_html_adaptive(
