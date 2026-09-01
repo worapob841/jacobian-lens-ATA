@@ -470,13 +470,18 @@ def prep_prompt_vqav2(question_id: int, model_id: str) -> str:
             if item["question_id"] == question_id:
                 question = item["text"]
                 image_path = f"{image_root}/{item['image']}"
+                break
 
     # model answer where answer is like this
     # {"question_id": 262144005, "prompt": "What credit card company is on the banner in the background?\nAnswer the question using a single word or phrase.", "text": "Mastercard", "answer_id": "To8CJUTumuQgR8kRHL9Si2", "model_id": "llava-adaptive-hd-it-thres6040-multilev-dubconv-MGM-Finetune-en-h100-01012026", "metadata": {}}
     # {"question_id": 262144003, "prompt": "Is the pitcher wearing a hat?\nAnswer the question using a single word or phrase.", "text": "Yes", "answer_id": "CPTyG27YwC5ZbFkaBUcroD", "model_id": "llava-adaptive-hd-it-thres6040-multilev-dubconv-MGM-Finetune-en-h100-01012026", "metadata": {}}
     with open(VQAV2_MODEL_ANS, "r") as f:
-        model_answer = json.loads(f.readlines()[question_id])["text"]
-    return (
+        for line in f:
+            item = json.loads(line)
+            if item["question_id"] == question_id:
+                model_answer = item["text"]
+                break
+    return (    
         image_path,
         f"A chat between a curious user and an artificial intelligence assistant. The assistant gives helpful, detailed, and polite answers to the user's questions. USER: <image>\n{question} ASSISTANT: {model_answer}",
     )

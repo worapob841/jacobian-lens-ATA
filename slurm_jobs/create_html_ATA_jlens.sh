@@ -19,4 +19,4 @@ export TOKENPACKER_REPO=/g/home/orachat.c/project/MLLM/TokenPacker
 # Use Singularity to execute the environment within the .sif file
 singularity exec --nv   \
         /g/home/orachat.c/project/MLLM/TokenPacker/research.sif \
-            python ata_multimodal_jlens.py
+            python3 ata_multimodal_jlens.py
