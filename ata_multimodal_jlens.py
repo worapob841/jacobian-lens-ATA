@@ -547,17 +547,142 @@ if __name__ == "__main__":
     #     top_n=10,
     # )
 
-    QID_VQAV2 = [17515006, 17515007, 17515008]
-    QID_TEXTVQA = [17515009, 17515010]
-    QID_OCRBENCH = [17515011, 17515012]
-    QID_MMMU = [17515013, 17515014]
-    QID_MMBENCH = [17515015, 17515016]
-    QID_GQA = [17515017, 17515018]
-    QID_POPE = [17515019, 17515020]
-    QID_DOCVQA = [17515021, 17515022]
-    QID_MMVET = [17515023, 17515024]
-    QID_VIZWIZ = [17515025, 17515026]
-    QID_MME = [17515027, 17515028]
+    QID_VQAV2 = [                                                                                                                                                                                                                        
+        100574079,                                                                                                                                                                                                                        
+        100362002,                                                                                                                                                                                                                        
+        100214000,                                                                                                                                                                                                                        
+        100633004,                                                                                                                                                                                                                        
+        100575000,                                                                                                                                                                                                                        
+        10127000,                                                                                                                                                                                                                         
+        105185001,                                                                                                                                                                                                                        
+        106231000,                                                                                                                                                                                                                        
+        102046004,                                                                                                                                                                                                                        
+    ]        
+    QID_TEXTVQA = [                                                                                                                                                                                                                      
+        "0040aa9c1660068e",                                                                                                                                                                                                               
+        "0021804a9f9d5db6",                                                                                                                                                                                                               
+        "0017c0c45277ee1a",                                                                                                                                                                                                               
+        "00054dab88635bdb",                                                                                                                                                                                                               
+        "0024fa464b466993",                                                                                                                                                                                                               
+        "7a59dba3e2b42d4d",                                                                                                                                                                                                               
+        "0ddcea5af5b2fd8a",                                                                                                                                                                                                               
+        "0413b2bcad5b3579",                                                                                                                                                                                                               
+        "669217362dd32ed2",                                                                                                                                                                                                               
+        "2ee5cf87702d01ae",                                                                                                                                                                                                               
+    ]  
+    QID_OCRBENCH = [                                                                                                                                                                                                                     
+        1115,                                                                                                                                                                                                                             
+        1191,                                                                                                                                                                                                                             
+        100,                                                                                                                                                                                                                              
+        1194,                                                                                                                                                                                                                             
+        1003,                                                                                                                                                                                                                             
+        1031,                                                                                                                                                                                                                             
+        427,                                                                                                                                                                                                                              
+        2138,                                                                                                                                                                                                                             
+        1200,                                                                                                                                                                                                                             
+        82548,                                                                                                                                                                                                                            
+        1049,                                                                                                                                                                                                                             
+        1805,                                                                                                                                                                                                                             
+    ]                              
+    QID_MMMU = [                                                                                                                                                                                                                         
+        "validation_Accounting_16",                                                                                                                                                                                                       
+        "validation_Agriculture_26",                                                                                                                                                                                                      
+        "validation_Art_Theory_15",                                                                                                                                                                                                       
+        "validation_Accounting_9",                                                                                                                                                                                                        
+        "validation_Architecture_and_Engineering_21",                                                                                                                                                                                     
+        "validation_Accounting_8",                                                                                                                                                                                                        
+        "validation_Economics_6",                                                                                                                                                                                                         
+        "validation_Mechanical_Engineering_26",                                                                                                                                                                                           
+        "validation_Clinical_Medicine_18",                                                                                                                                                                                                
+        "validation_Math_29",                                                                                                                                                                                                             
+        "validation_Public_Health_10",                                                                                                                                                                                                    
+    ]                                                
+    QID_MMBENCH = [                                                                                                                                                                                                                      
+        1000309,                                                                                                                                                                                                                          
+        1000156,                                                                                                                                                                                                                          
+        1000459,                                                                                                                                                                                                                          
+        1000448,                                                                                                                                                                                                                          
+        1000011,                                                                                                                                                                                                                          
+        3000737,                                                                                                                                                                                                                          
+        1000607,                                                                                                                                                                                                                          
+        1000986,                                                                                                                                                                                                                          
+        1000602,                                                                                                                                                                                                                          
+        1000532,                                                                                                                                                                                                                          
+        1851,                                                                                                                                                                                                                             
+    ]                                   
+    QID_GQA = [                                                                                                                                                                                                                          
+        "201030353",                                                                                                                                                                                                                      
+        "201037132",                                                                                                                                                                                                                      
+        "201030460",                                                                                                                                                                                                                      
+        "201037065",                                                                                                                                                                                                                      
+        "201045210",                                                                                                                                                                                                                      
+        "20618704",                                                                                                                                                                                                                       
+        "201056119",                                                                                                                                                                                                                      
+        "201641141",                                                                                                                                                                                                                      
+        "201336939",                                                                                                                                                                                                                      
+        "201498043",                                                                                                                                                                                                                      
+    ]    
+    QID_POPE = [                                                                                                                                                                                                                         
+        10000038,                                                                                                                                                                                                                         
+        10000132,                                                                                                                                                                                                                         
+        10000214,                                                                                                                                                                                                                         
+        10000274,                                                                                                                                                                                                                         
+        10000282,                                                                                                                                                                                                                         
+        2707,                                                                                                                                                                                                                             
+        2708,                                                                                                                                                                                                                             
+        1941,                                                                                                                                                                                                                             
+        1290,                                                                                                                                                                                                                             
+        2657,                                                                                                                                                                                                                             
+        2653,                                                                                                                                                                                                                             
+        2466,                                                                                                                                                                                                                             
+    ]                               
+    QID_DOCVQA = [                                                                                                                                                                                                                       
+        10298,                                                                                                                                                                                                                            
+        10299,                                                                                                                                                                                                                            
+        10302,                                                                                                                                                                                                                            
+        1028,                                                                                                                                                                                                                             
+        10301,                                                                                                                                                                                                                            
+        31504,                                                                                                                                                                                                                            
+        13503,                                                                                                                                                                                                                            
+        39107,                                                                                                                                                                                                                            
+        39114,                                                                                                                                                                                                                            
+        39109,                                                                                                                                                                                                                            
+    ]                          
+    QID_MMVET = [                                                                                                                                                                                                                        
+        0,                                                                                                                                                                                                                                
+        10,                                                                                                                                                                                                                               
+        100,                                                                                                                                                                                                                              
+        102,                                                                                                                                                                                                                              
+        1,                                                                                                                                                                                                                                
+        106,                                                                                                                                                                                                                              
+        104,                                                                                                                                                                                                                              
+        11,                                                                                                                                                                                                                               
+        12,                                                                                                                                                                                                                               
+    ]     
+    QID_VIZWIZ =  [                                                                                                                                                                                                                       
+        104,                                                                                                                                                                                                                              
+        1018,                                                                                                                                                                                                                             
+        1021,                                                                                                                                                                                                                             
+        1047,                                                                                                                                                                                                                             
+        1042,                                                                                                                                                                                                                             
+        124,                                                                                                                                                                                                                              
+        159,                                                                                                                                                                                                                              
+        2238,                                                                                                                                                                                                                             
+        2002,                                                                                                                                                                                                                             
+    ]       
+    QID_MME = [                                                                                                                                                                                                                          
+        "artwork/images/11276.jpg",                                                                                                                                                                                                       
+        "artwork/images/12133.jpg",                                                                                                                                                                                                       
+        "artwork/images/17317.jpg",                                                                                                                                                                                                       
+        "artwork/images/1873.jpg",                                                                                                                                                                                                        
+        "artwork/images/28758.jpg",                                                                                                                                                                                                       
+        "celebrity/images/tt0118636_shot_0344_img_0.jpg",                                                                                                                                                                                 
+        "artwork/images/42706.jpg",                                                                                                                                                                                                       
+        "text_translation/0003.png",                                                                                                                                                                                                      
+        "color/000000442456.jpg",                                                                                                                                                                                                         
+        "landmark/images/0a3035bfca2ab920.jpg",                                                                                                                                                                                           
+    ] 
+    
     for qid in QID_VQAV2:
         image_path, prompt = prep_prompt_vqav2(qid, MODEL_NAME)
         print(image_path, prompt)
