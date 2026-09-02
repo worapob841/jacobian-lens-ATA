@@ -13,6 +13,19 @@ import torch.nn as nn
 import numpy as np
 from PIL import Image
 
+from prompt_prep_utils import prep_prompt_vqav2, 
+                            prep_prompt_textvqa, 
+                            prep_prompt_ocrbench, 
+                            prep_prompt_mmmu,
+                            prep_prompt_mmbench,
+                            prep_prompt_gqa,
+                            prep_prompt_pope,
+                            prep_prompt_docvqa,
+                            prep_prompt_mmvet,
+                            prep_prompt_vizwiz,
+                            prep_prompt_mme
+
+
 # ==========================================
 # TokenPacker Repository Path Setup
 # ==========================================
@@ -452,41 +465,6 @@ def export_multimodal_slice_html_adaptive(
     )
     return page_html
 
-
-def prep_prompt_vqav2(question_id: int, model_id: str) -> str:
-    """Prepares a prompt for VQAv2-style questions with an image."""
-    VQAV2_QUESTION_PATH = "/g/home/orachat.c/project/MLLM/TokenPacker/playground/data/eval/vqav2/llava_vqav2_mscoco_test2015.jsonl"
-    VQAV2_MODEL_ANS = f"/g/home/orachat.c/project/MLLM/TokenPacker/playground/data/eval/vqav2/answers/llava_vqav2_mscoco_test-dev2015/{model_id}/merge.jsonl"
-    # open question file where jsonl look like this
-    # {"question_id": 262144000, "image": "COCO_test2015_000000262144.jpg", "text": "Is the ball flying towards the batter?\nAnswer the question using a single word or phrase.", "category": "default"}
-    # {"question_id": 262144001, "image": "COCO_test2015_000000262144.jpg", "text": "What sport is this?\nAnswer the question using a single word or phrase.", "category": "default"}
-    # and return image path, question, model answer
-    image_root = (
-        "/g/home/orachat.c/project/MLLM/TokenPacker/playground/data/eval/vqav2/test2015"
-    )
-    with open(VQAV2_QUESTION_PATH, "r") as f:
-        for line in f:
-            item = json.loads(line)
-            if item["question_id"] == question_id:
-                question = item["text"]
-                image_path = f"{image_root}/{item['image']}"
-                break
-
-    # model answer where answer is like this
-    # {"question_id": 262144005, "prompt": "What credit card company is on the banner in the background?\nAnswer the question using a single word or phrase.", "text": "Mastercard", "answer_id": "To8CJUTumuQgR8kRHL9Si2", "model_id": "llava-adaptive-hd-it-thres6040-multilev-dubconv-MGM-Finetune-en-h100-01012026", "metadata": {}}
-    # {"question_id": 262144003, "prompt": "Is the pitcher wearing a hat?\nAnswer the question using a single word or phrase.", "text": "Yes", "answer_id": "CPTyG27YwC5ZbFkaBUcroD", "model_id": "llava-adaptive-hd-it-thres6040-multilev-dubconv-MGM-Finetune-en-h100-01012026", "metadata": {}}
-    with open(VQAV2_MODEL_ANS, "r") as f:
-        for line in f:
-            item = json.loads(line)
-            if item["question_id"] == question_id:
-                model_answer = item["text"]
-                break
-    return (    
-        image_path,
-        f"A chat between a curious user and an artificial intelligence assistant. The assistant gives helpful, detailed, and polite answers to the user's questions. USER: <image>\n{question} ASSISTANT: {model_answer}",
-    )
-
-
 if __name__ == "__main__":
     MODEL_PATH = "/g/home/orachat.c/project/MLLM/TokenPacker/checkpoints/llava-cross_attn_adaptive-it-spatialscorrer-thres4060-bound-3060-alpha-001-multilev-dubconv-llava_v1_5_mix665k-en-h100-08092026"
     MODEL_NAME = "llava-cross_attn_adaptive-it-spatialscorrer-thres4060-bound-3060-alpha-001-multilev-dubconv-llava_v1_5_mix665k-en-h100-08092026"
@@ -557,17 +535,175 @@ if __name__ == "__main__":
     else:
         lens_model = None
 
-    image_path, prompt = prep_prompt_vqav2(QID, MODEL_NAME)
-    print(image_path, prompt)
-    tmp = export_multimodal_slice_html_adaptive(
-        lens_model,
-        fitted_lens_path=FITTED_LENS_PATH,
-        image_path=image_path,
-        prompt_text=prompt,
-        output_html_path=f"out/{MODEL_NAME}/visualizations/multimodal_slice_vqav2_{QID}.html",
-        # mode = "embed",
-        top_n=10,
-    )
+    # image_path, prompt = prep_prompt_vqav2(QID, MODEL_NAME)
+    # print(image_path, prompt)
+    # tmp = export_multimodal_slice_html_adaptive(
+    #     lens_model,
+    #     fitted_lens_path=FITTED_LENS_PATH,
+    #     image_path=image_path,
+    #     prompt_text=prompt,
+    #     output_html_path=f"out/{MODEL_NAME}/visualizations/multimodal_slice_vqav2_{QID}.html",
+    #     # mode = "embed",
+    #     top_n=10,
+    # )
+
+    QID_VQAV2 = [17515006, 17515007, 17515008]
+    QID_TEXTVQA = [17515009, 17515010]
+    QID_OCRBENCH = [17515011, 17515012]
+    QID_MMMU = [17515013, 17515014]
+    QID_MMBENCH = [17515015, 17515016]
+    QID_GQA = [17515017, 17515018]
+    QID_POPE = [17515019, 17515020]
+    QID_DOCVQA = [17515021, 17515022]
+    QID_MMVET = [17515023, 17515024]
+    QID_VIZWIZ = [17515025, 17515026]
+    QID_MME = [17515027, 17515028]
+    for qid in QID_VQAV2:
+        image_path, prompt = prep_prompt_vqav2(qid, MODEL_NAME)
+        print(image_path, prompt)
+        tmp = export_multimodal_slice_html_adaptive(
+            lens_model,
+            fitted_lens_path=FITTED_LENS_PATH,
+            image_path=image_path,
+            prompt_text=prompt,
+            output_html_path=f"out/{MODEL_NAME}/visualizations/multimodal_slice_vqav2_{qid}.html",
+            # mode = "embed",
+            top_n=10,
+        )
+    
+    for qid in QID_TEXTVQA:
+        image_path, prompt = prep_prompt_textvqa(qid, MODEL_NAME)
+        print(image_path, prompt)
+        tmp = export_multimodal_slice_html_adaptive(
+            lens_model,
+            fitted_lens_path=FITTED_LENS_PATH,
+            image_path=image_path,
+            prompt_text=prompt,
+            output_html_path=f"out/{MODEL_NAME}/visualizations/multimodal_slice_textvqa_{qid}.html",
+            # mode = "embed",
+            top_n=10,
+        )
+    
+    for qid in QID_OCRBENCH:
+        image_path, prompt = prep_prompt_ocrbench(qid, MODEL_NAME)
+        print(image_path, prompt)
+        tmp = export_multimodal_slice_html_adaptive(
+            lens_model,
+            fitted_lens_path=FITTED_LENS_PATH,
+            image_path=image_path,
+            prompt_text=prompt,
+            output_html_path=f"out/{MODEL_NAME}/visualizations/multimodal_slice_ocrbench_{qid}.html",
+            # mode = "embed",
+            top_n=10,
+        )
+    
+    for qid in QID_MMMU:
+        image_path, prompt = prep_prompt_mmmu(qid, MODEL_NAME)
+        print(image_path, prompt)
+        tmp = export_multimodal_slice_html_adaptive(
+            lens_model,
+            fitted_lens_path=FITTED_LENS_PATH,
+            image_path=image_path,
+            prompt_text=prompt,
+            output_html_path=f"out/{MODEL_NAME}/visualizations/multimodal_slice_mmmu_{qid}.html",
+            # mode = "embed",
+            top_n=10,
+        )
+    
+    for qid in QID_MMBENCH:
+        image_path, prompt = prep_prompt_mmbench(qid, MODEL_NAME)
+        print(image_path, prompt)
+        tmp = export_multimodal_slice_html_adaptive(
+            lens_model,
+            fitted_lens_path=FITTED_LENS_PATH,
+            image_path=image_path,
+            prompt_text=prompt,
+            output_html_path=f"out/{MODEL_NAME}/visualizations/multimodal_slice_mmbench_{qid}.html",
+            # mode = "embed",
+            top_n=10,
+        )
+
+    for qid in QID_GQA:
+        image_path, prompt = prep_prompt_gqa(qid, MODEL_NAME)
+        print(image_path, prompt)
+        tmp = export_multimodal_slice_html_adaptive(
+            lens_model,
+            fitted_lens_path=FITTED_LENS_PATH,
+            image_path=image_path,
+            prompt_text=prompt,
+            output_html_path=f"out/{MODEL_NAME}/visualizations/multimodal_slice_gqa_{qid}.html",
+            # mode = "embed",
+            top_n=10,
+        )
+
+    for qid in QID_POPE:
+        image_path, prompt = prep_prompt_pope(qid, MODEL_NAME)
+        print(image_path, prompt)
+        tmp = export_multimodal_slice_html_adaptive(
+            lens_model,
+            fitted_lens_path=FITTED_LENS_PATH,
+            image_path=image_path,
+            prompt_text=prompt,
+            output_html_path=f"out/{MODEL_NAME}/visualizations/multimodal_slice_pope_{qid}.html",
+            # mode = "embed",
+            top_n=10,
+        )
+
+    for qid in QID_DOCVQA:
+        image_path, prompt = prep_prompt_docvqa(qid, MODEL_NAME)
+        print(image_path, prompt)
+        tmp = export_multimodal_slice_html_adaptive(
+            lens_model,
+            fitted_lens_path=FITTED_LENS_PATH,
+            image_path=image_path,
+            prompt_text=prompt,
+            output_html_path=f"out/{MODEL_NAME}/visualizations/multimodal_slice_docvqa_{qid}.html",
+            # mode = "embed",
+            top_n=10,
+        )
+
+    for qid in QID_MMVET:
+        image_path, prompt = prep_prompt_mmvet(qid, MODEL_NAME)
+        print(image_path, prompt)
+        tmp = export_multimodal_slice_html_adaptive(
+            lens_model,
+            fitted_lens_path=FITTED_LENS_PATH,
+            image_path=image_path,
+            prompt_text=prompt,
+            output_html_path=f"out/{MODEL_NAME}/visualizations/multimodal_slice_mmvet_{qid}.html",
+            # mode = "embed",
+            top_n=10,
+        )
+
+    for qid in QID_VIZWIZ:
+        image_path, prompt = prep_prompt_vizwiz(qid, MODEL_NAME)
+        print(image_path, prompt)
+        tmp = export_multimodal_slice_html_adaptive(
+            lens_model,
+            fitted_lens_path=FITTED_LENS_PATH,
+            image_path=image_path,
+            prompt_text=prompt,
+            output_html_path=f"out/{MODEL_NAME}/visualizations/multimodal_slice_vizwiz_{qid}.html",
+            # mode = "embed",
+            top_n=10,
+        )
+
+    for qid in QID_MME:
+        image_path, prompt = prep_prompt_mme(qid, MODEL_NAME)
+        print(image_path, prompt)
+        tmp = export_multimodal_slice_html_adaptive(
+            lens_model,
+            fitted_lens_path=FITTED_LENS_PATH,
+            image_path=image_path,
+            prompt_text=prompt,
+            output_html_path=f"out/{MODEL_NAME}/visualizations/multimodal_slice_mme_{qid}.html",
+            # mode = "embed",
+            top_n=10,
+        )
+
+        
+    
+
 
     # prompt = "A chat between a curious user and an artificial intelligence assistant. The assistant gives helpful, detailed, and polite answers to the user's questions. USER: <image>\nWhat is the person holding?\nAnswer the question using a single word or phrase. ASSISTANT: Wii remote"
     # tmp = export_multimodal_slice_html_adaptive(
